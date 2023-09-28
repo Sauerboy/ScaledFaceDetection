@@ -8,8 +8,8 @@
 
 /*
 Please fill in the following
- Student Name:
- Date:
+ Student Name: Ariel Sauer
+ Date: September 29 2023
 
 ECE 2035 Project 1-2
 
@@ -59,11 +59,92 @@ int main(int argc, char *argv[]) {
    }
    
    /* your code goes here. */
-   TopLeft = 0;        // Temporary: replace this.
-   BottomRight = 100;  // Temporary: replace this.
+int faces [28]; // max number of faces, 4096/144
+int scales [28]; // max number of faces, 4096/144
+int faceNum = 0;
+int redCount = 0;
+int index = 0;
+int scale = 0;
+for (int i = 0; i < 4096; i++) {
+   //printf("Pixel: %d\n", Crowd[i]);
+   while (Crowd[i] == 2) {
+      redCount++;
+      // printf("RedCount: %d\n", redCount);
+      if (Crowd[++i] != 2 && redCount % 3 == 0) {
+         if (Crowd[i - 64] == 2)
+            break;
+         faces[faceNum] = i;
+         scales[faceNum] = redCount / 3;
+         faceNum++;
+      }
+   }
+   redCount = 0;
+   }
+   for (int i = 0; i < faceNum; i++) {
+      scale = scales[i];
+      index = faces[i] + (64 * scale) - (scale * 2);
+      if (Crowd[index] != 1) {
+         printf("Hat Check 1 False, index: %d\n", i);
+         continue;
+      }
+      index += 128 * scale;
+      if (Crowd[index] != 1) {
+         printf("Hat Check 2 False, index: %d\n", i);
+         continue;
+      }
+      index += scale * 127;
+      if (Crowd[index] != 3) {
+         printf("Eye Check False, index: %d\n", i);
+         continue;
+      }
+
+      index += scale * 127;
+      if (Crowd[index] != 8) {
+         printf("Smile Check False, index: %d\n", i);
+         continue;
+      }
+
+      index += scale * 64;
+      if (Crowd[index] != 5) {
+         printf("Skin Check False, index: %d\n", i);
+         continue;
+      }
+   index += scale * 192;
+      if (Crowd[index] != 7) {
+         printf("Shirt Check False, index: %d\n", i);
+         continue;
+      }
+
+      break;
+   }
+      
+   printf("George is at index %d\n", index);
+
+   TopLeft = index - (707 * scale);        // Temporary: replace this.
+   BottomRight = index + 65 * (scale - 1) + 8 * scale;  // Temporary: replace this.
    
+
    printf("George is located at: top left pixel %4d, bottom right pixel %4d.\n", TopLeft, BottomRight);
    exit(0);
+}
+
+int isGeorge(int roughIndex, int scale, int Crowd[]) {
+   printf("Scale: %d, Initial:  %d   ", scale, roughIndex);
+   // int final = roughIndex + scale * 12;
+   // for (int j = 1; j < scale; j++) {
+   //    roughIndex += 64 - (scale * 3); // go to next line beginning of where more red should be
+   //    for (i = roughIndex; i < scale * 3 + roughIndex; i++) {
+   //       if (Crowd[i] != 2)
+   //       printf("Index of Failure: %d\n", i);
+   //          return 0;
+   //    }
+   // }
+   roughIndex += (64 * scale) - (scale * 2);
+   if (Crowd[roughIndex] != 1) {
+      printf("Index of Failure: %d, Color of Failure: %d\n", roughIndex, Crowd[roughIndex]);
+      return 0;
+   }
+   return 1;
 }
 
 /* This routine loads in up to 1024 newline delimited integers from
