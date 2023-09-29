@@ -27,7 +27,7 @@ scaled in a crowd of faces.
 #include <stdio.h>
 #include <stdlib.h>
 
-#define DEBUG 1 // RESET THIS TO 0 BEFORE SUBMITTING YOUR CODE
+#define DEBUG 0 // RESET THIS TO 0 BEFORE SUBMITTING YOUR CODE
 
 int Load_Mem(char *, int *);
 
@@ -61,19 +61,19 @@ int main(int argc, char *argv[]) {
    /* your code goes here. */
 int faces [28]; // max number of faces, 4096/144
 int scales [28]; // max number of faces, 4096/144
-int faceNum = 0;
-int redCount = 0;
-int index = 0;
-int scale = 0;
+int faceNum = 0; // index for faces and scales array
+int redCount = 0; // how many reds in a row
+int index = 0; // index value while checking pixels
+int scale = 0; // temporary scale value
 for (int i = 0; i < 4096; i++) {
    //printf("Pixel: %d\n", Crowd[i]);
    while (Crowd[i] == 2) {
-      redCount++;
+      redCount++; // increment redCount while reds are in a row
       // printf("RedCount: %d\n", redCount);
-      if (Crowd[++i] != 2 && redCount % 3 == 0) {
-         if (Crowd[i - 64] == 2)
+      if (Crowd[++i] != 2 && redCount % 3 == 0) { // when next pixel is not red and redCount is a multiple of 3, George's hat has been found. 
+         if (Crowd[i - 64] == 2) // if this is not the top of his hat, we don't count it
             break;
-         faces[faceNum] = i;
+         faces[faceNum] = i; // save index of this George candidate
          scales[faceNum] = redCount / 3;
          faceNum++;
       }
@@ -82,68 +82,50 @@ for (int i = 0; i < 4096; i++) {
    }
    for (int i = 0; i < faceNum; i++) {
       scale = scales[i];
-      index = faces[i] + (64 * scale) - (scale * 2);
+      index = faces[i] + (64 * scale) - (scale * 2); // check white on hat
       if (Crowd[index] != 1) {
-         printf("Hat Check 1 False, index: %d\n", i);
+         //printf("Hat Check 1 False, index: %d\n", i);
          continue;
       }
       index += 128 * scale;
-      if (Crowd[index] != 1) {
-         printf("Hat Check 2 False, index: %d\n", i);
+      if (Crowd[index] != 1) { // check second white on hat
+         //printf("Hat Check 2 False, index: %d\n", i);
          continue;
       }
       index += scale * 127;
-      if (Crowd[index] != 3) {
-         printf("Eye Check False, index: %d\n", i);
+      if (Crowd[index] != 3) { // check eye
+         //printf("Eye Check False, index: %d\n", i);
          continue;
       }
       index += scale * 64;
-      if (Crowd[index] != 5) {
-         printf("Skin Check False, index: %d\n", i);
+      if (Crowd[index] != 5) { // check skin
+         //printf("Skin Check False, index: %d\n", i);
          continue;
       }
       index += scale * 63;
-      if (Crowd[index] != 8) {
-         printf("Smile Check False, index: %d\n", i);
+      if (Crowd[index] != 8) { // check smile
+         //printf("Smile Check False, index: %d\n", i);
          continue;
       }
    index += scale * 256;
-      if (Crowd[index] != 7) {
-         printf("Shirt Check False, index: %d\n", i);
+      if (Crowd[index] != 7) { // check shirt
+         //printf("Shirt Check False, index: %d\n", i);
          continue;
       }
 
-      break;
+      break; // if none of these tests failed, George is found and we break the loop
    }
       
-   printf("George is at index %d\n", index);
+   //printf("George is at index %d\n", index);
 
-   TopLeft = index - (707 * scale);        // Temporary: replace this.
-   BottomRight = index + 65 * (scale - 1) + 8 * scale;  // Temporary: replace this.
+   TopLeft = index - (707 * scale);        // Calculate top left
+   BottomRight = index + 65 * (scale - 1) + 8 * scale;  // Calculate bottom right
    
 
    printf("George is located at: top left pixel %4d, bottom right pixel %4d.\n", TopLeft, BottomRight);
    exit(0);
 }
 
-int isGeorge(int roughIndex, int scale, int Crowd[]) {
-   printf("Scale: %d, Initial:  %d   ", scale, roughIndex);
-   // int final = roughIndex + scale * 12;
-   // for (int j = 1; j < scale; j++) {
-   //    roughIndex += 64 - (scale * 3); // go to next line beginning of where more red should be
-   //    for (i = roughIndex; i < scale * 3 + roughIndex; i++) {
-   //       if (Crowd[i] != 2)
-   //       printf("Index of Failure: %d\n", i);
-   //          return 0;
-   //    }
-   // }
-   roughIndex += (64 * scale) - (scale * 2);
-   if (Crowd[roughIndex] != 1) {
-      printf("Index of Failure: %d, Color of Failure: %d\n", roughIndex, Crowd[roughIndex]);
-      return 0;
-   }
-   return 1;
-}
 
 /* This routine loads in up to 1024 newline delimited integers from
 a named file in the local directory. The values are placed in the
