@@ -97,19 +97,17 @@ for (int i = 0; i < 4096; i++) {
          printf("Eye Check False, index: %d\n", i);
          continue;
       }
-
-      index += scale * 127;
-      if (Crowd[index] != 8) {
-         printf("Smile Check False, index: %d\n", i);
-         continue;
-      }
-
       index += scale * 64;
       if (Crowd[index] != 5) {
          printf("Skin Check False, index: %d\n", i);
          continue;
       }
-   index += scale * 192;
+      index += scale * 63;
+      if (Crowd[index] != 8) {
+         printf("Smile Check False, index: %d\n", i);
+         continue;
+      }
+   index += scale * 256;
       if (Crowd[index] != 7) {
          printf("Shirt Check False, index: %d\n", i);
          continue;
