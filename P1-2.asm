@@ -43,7 +43,7 @@ FindGeorge:	addi	$1, $0, Array		# point to array base
 PreLoop:	addi	$4, $0, 7			# Green color
 			add		$6, $0, $0			# Green counter/scale
 
-Loop:		addi $3, $3, -5				# Decrement counter
+Loop:		addi $3, $3, -5				# Decrement array index
 			lb $5, 0($3)
 			bne $5, $4, Loop			# if pixel not green, repeat loop
 
