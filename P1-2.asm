@@ -59,8 +59,7 @@ PostGreen:	addi $3, $3, -1				# Start counting green pixels
 
 			addi $7, $3, -63
 			lb $5, 0($7)				# Check pixel above and one right to determine if this is the top of the shirt
-			beq $5, $4, PreLoop			# Go back to find other shirts
-
+			beq $5, $4, PreLoop 			# If $4 not one pixel left of the top of shirt, Return to green detector loop
 
 			addi $4, $0, 8				# Calculate scale
 			addi $5, $0, 5
